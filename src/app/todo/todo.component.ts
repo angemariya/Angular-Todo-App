@@ -17,17 +17,32 @@ export interface todo {
   imports: [CommonModule, FormComponent],
   template: `
   <div *ngFor="let todo of todos$ | async" >
-    <span>
+    <span [ngClass]="{'done': todo.done}">
       {{todo.title}}
     </span>
-    <button>Done</button>
-    <button>Remove</button> 
+    <button (click)="markAsDone(todo.id)">Done</button>
+    <button (click)="deleteTodo(todo.id)">Remove</button> 
   </div>
     
   `,
+  styles: `
+    .done {
+      text-decoration: line-through;
+    }
+  `
+
 })
 export class TodoComponent {
   constructor(private TodoServiceService: TodoServiceService) { }
+  
   todos$ = this.TodoServiceService.todos$;
+
+  markAsDone = (id: number) => {
+    this.TodoServiceService.markAsDone(id);
+  }
+
+  deleteTodo = (id: number) => {
+    this.TodoServiceService.deleteTodo(id)
+  }
 
 }

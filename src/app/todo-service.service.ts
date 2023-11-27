@@ -16,6 +16,26 @@ export class TodoServiceService {
     this.todosSubject.next(newTodos);
   }
 
+  markAsDone = (id: number) => {
+    const currentTodos = this.todosSubject.value;
+    const newTodos = currentTodos.map(todo => {
+      if (todo.id === id) {
+        return {
+          ...todo,
+          done: true,
+        };
+      }
+      return todo;
+    });
+    this.todosSubject.next(newTodos);
+  }
+
+  deleteTodo = (id: number) => {
+    const currentTodos = this.todosSubject.value;
+    const newTodos = currentTodos.filter(todo => todo.id !== id);
+    this.todosSubject.next(newTodos);
+  }
+
   constructor() { }
 
   async getTodos(): Promise<todo[]> {
