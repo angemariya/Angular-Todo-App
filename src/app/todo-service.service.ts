@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
 import { todo } from './todo/todo.component';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoServiceService {
   url = 'https://jsonplaceholder.typicode.com/todos';
+  private todosSubject = new BehaviorSubject<todo[]>([]);
+  todos$ = this.todosSubject.asObservable();
+
+  addTodo = (newTodo: todo) => {
+    const currentTodos = this.todosSubject.value;
+    const newTodos = [...currentTodos, newTodo];
+    this.todosSubject.next(newTodos);
+  }
+
   constructor() { }
 
   async getTodos(): Promise<todo[]> {

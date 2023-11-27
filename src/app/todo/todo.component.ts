@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormComponent } from '../form/form.component';
+import { TodoServiceService } from '../todo-service.service';
+
 
 export interface todo {
   userId: number,
@@ -11,11 +14,11 @@ export interface todo {
 @Component({
   selector: 'app-todo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormComponent],
   template: `
-  <div>
+  <div *ngFor="let todo of todos$ | async" >
     <span>
-      {{newTodo.title}}
+      {{todo.title}}
     </span>
     <button>Done</button>
     <button>Remove</button> 
@@ -24,5 +27,7 @@ export interface todo {
   `,
 })
 export class TodoComponent {
-  @Input() newTodo!: todo;
+  constructor(private TodoServiceService: TodoServiceService) { }
+  todos$ = this.TodoServiceService.todos$;
+
 }
