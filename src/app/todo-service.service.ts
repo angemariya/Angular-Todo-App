@@ -7,12 +7,19 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 })
 export class TodoServiceService {
   url = 'https://jsonplaceholder.typicode.com/todos';
+  limitTodos = 5;
   private todosSubject = new BehaviorSubject<todo[]>([]);
   todos$ = this.todosSubject.asObservable();
 
   addTodo = (newTodo: todo) => {
     const currentTodos = this.todosSubject.value;
-    const newTodos = [...currentTodos, newTodo];
+    const newTodos = [newTodo, ...currentTodos ];
+    this.todosSubject.next(newTodos);
+  }
+
+  addAsyncTodos(todos: todo[]) {
+    const currentTodos = this.todosSubject.value;
+    const newTodos = [...currentTodos, ...todos];
     this.todosSubject.next(newTodos);
   }
 
@@ -36,18 +43,25 @@ export class TodoServiceService {
     this.todosSubject.next(newTodos);
   }
 
-  constructor() { }
-
   async getTodos(): Promise<todo[]> {
-    const response = await fetch(this.url);
-    const data = await response.json();
-    return data;
+    try {
+      const response = await fetch(this.url);
+      const data = await response.json();
+      return data.slice(0, this.limitTodos);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 
   async getTodoById(id: number): Promise<todo> {
-    const response = await fetch(`${this.url}/${id}`);
-    const data = await response.json();
-    return data;
+    try {
+      const response = await fetch(`${this.url}/${id}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return {} as todo;
+    }
   }
-
 }
